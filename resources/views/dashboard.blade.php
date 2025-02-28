@@ -38,7 +38,7 @@
                         <div class="card-body">
                             <div class="d-flex justify-content-between">
                                 <div>
-                                    <h5><b>Total Request</b></h5>
+                                    <h5><b>Total Expenditure YTD</b></h5>
                                     <p class="text-muted">Total Amt. Request</p>
                                 </div>
                                 <h3 class="text-success fw-bold">GHS {{ number_format($amount_used, 2) }}</h3>
@@ -57,18 +57,19 @@
 
             <div class="card">
                 <div class="card-header">
-                    <div class="card-title">Top 10 Budget Allocation for {{ \App\Models\BudgetHeader::find($header_id)->name }}</div>
+                    <div class="card-title">Top 5 Budget Allocation for {{ \App\Models\BudgetHeader::find($header_id)->name }}</div>
                 </div>
                 <div class="card-body">
                     <table class="table table-head-bg-success">
                         <thead>
                             <tr>
                                 <th style="width: 20px" class="no-sort">#</th>
-                                <th>Name</th>
+                                <th>Budget Entry</th>
                                 <th>Department</th>
                                 <th>Category</th>
                                 <th>Amt. Allocated</th>
                                 <th>Amt. Requested</th>
+                                <th>Amt. Spent</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -79,6 +80,7 @@
                                     <td>{{ \App\Models\Department::find($budget->department_id)->name }}</td>
                                     <td>{{ \App\Models\Category::find($budget->category_id)->name }}</td>
                                     <td>{{ number_format($budget->amount, 2) }}</td>
+                                    <td>{{ number_format($budget->amount_requested, 2) }}</td>
                                     <td>{{ number_format($budget->amount_used, 2) }}</td>
                                 </tr>
                             @empty
@@ -86,6 +88,44 @@
                                     <td colspan="10">No Data Found</td>
                                 </tr>
                             @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">Top 5 Over Spent Budget Allocation for {{ \App\Models\BudgetHeader::find($header_id)->name }}</div>
+                </div>
+                <div class="card-body">
+                    <table class="table table-head-bg-primary">
+                        <thead>
+                        <tr>
+                            <th style="width: 20px" class="no-sort">#</th>
+                            <th>Budget Entry</th>
+                            <th>Department</th>
+                            <th>Category</th>
+                            <th>Amt. Allocated</th>
+                            <th>Amt. Spent</th>
+                            <th>Over</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @forelse($top5overspending as $key => $budget)
+                            <tr>
+                                <td>{{ ++$key }}</td>
+                                <td>{{ $budget->name }}</td>
+                                <td>{{ \App\Models\Department::find($budget->department_id)->name }}</td>
+                                <td>{{ \App\Models\Category::find($budget->category_id)->name }}</td>
+                                <td>{{ number_format($budget->amount, 2) }}</td>
+                                <td>{{ number_format($budget->amount_used, 2) }}</td>
+                                <td>{{ number_format($budget->amount_remaining, 2) }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="10">No Data Found</td>
+                            </tr>
+                        @endforelse
                         </tbody>
                     </table>
                 </div>

@@ -38,12 +38,14 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
+            'is_admin' => ['required'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
         $user = User::create([
             'name' => $request->name,
+            'is_admin' => $request->is_admin,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
@@ -55,12 +57,14 @@ class RegisteredUserController extends Controller
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
+            'is_admin' => ['required'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email,'.$request->id],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
         User::find($request->id)->update([
             'name' => $request->name,
+            'is_admin' => $request->is_admin,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);

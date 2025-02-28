@@ -32,7 +32,9 @@
                                     <h4 class="card-title">Budget Entries</h4>
                                 </div>
                                 <div class="col-3">
-                                    <button class="btn btn-primary btn-sm float-end" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-title="Add New Budget Entry" data-bs-url="form_create/createBudgetEntry" data-bs-size="modal-lg"><span class="btn-label"><i class="fas fa-plus"></i> New Entry</span></button>
+                                    @if(in_array(Auth()->user()->is_admin, perm_arrays('management')))
+                                        <button class="btn btn-primary btn-sm float-end" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-title="Add New Budget Entry" data-bs-url="form_create/createBudgetEntry" data-bs-size="modal-lg"><span class="btn-label"><i class="fas fa-plus"></i> New Entry</span></button>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -64,8 +66,10 @@
                                                 <td>{{ number_format($budget->amount, 2) }}</td>
                                                 <td nowrap>
                                                     <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-title="View Budget Details" data-bs-url="form_view/viewBudgetEntry/{{ $budget->id }}" data-bs-size="modal-lg"><span class="btn-label"><i class="fas fa-table"></i></span></button>
-                                                    <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-title="Edit Budget Details" data-bs-url="form_edit/editBudgetEntry/{{ $budget->id }}" data-bs-size="modal-lg"><span class="btn-label"><i class="far fa-edit"></i></span></button>
-                                                    <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-title="Confirm Deletion" data-bs-url="form_delete/deleteBudgetEntry/{{ $budget->id }}" data-bs-size=""><span class="btn-label"><i class="fas fa-trash-alt"></i></span></button>
+                                                    @if(in_array(Auth()->user()->is_admin, perm_arrays('management')))
+                                                        <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-title="Edit Budget Details" data-bs-url="form_edit/editBudgetEntry/{{ $budget->id }}" data-bs-size="modal-lg"><span class="btn-label"><i class="far fa-edit"></i></span></button>
+                                                        <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-title="Confirm Deletion" data-bs-url="form_delete/deleteBudgetEntry/{{ $budget->id }}" data-bs-size=""><span class="btn-label"><i class="fas fa-trash-alt"></i></span></button>
+                                                    @endif
                                                 </td>
                                             </tr>
                                         @empty

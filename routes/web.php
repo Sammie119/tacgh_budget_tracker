@@ -7,6 +7,7 @@ use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\ExpenseEntryController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReportController;
 use App\Models\BudgetHeader;
 use App\Models\VWBudgetEntry;
 use Illuminate\Support\Facades\Route;
@@ -65,10 +66,23 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::controller(ExpenseEntryController::class)->group(function () {
-        Route::get('/expense_entries', 'index')->name('expense_entries');
-        Route::post('/expense_entries', 'store')->name('expense_entries.store');
-        Route::put('/expense_entries', 'update')->name('expense_entries.update');
-        Route::post('/expense_entries_destroy', 'destroy')->name('expense_entries.destroy');
+        Route::get('/request_entries', 'index')->name('request_entries');
+        Route::post('/request_entries', 'store')->name('request_entries.store');
+        Route::put('/request_entries', 'update')->name('request_entries.update');
+        Route::post('/request_entries_destroy', 'destroy')->name('request_entries.destroy');
+
+        Route::get('/expense_entries', 'indexExpense')->name('expense_entries');
+//        Route::post('/expense_entries', 'storeExpense')->name('expense_entries.store');
+        Route::put('/expense_entries', 'updateExpense')->name('expense_entries.update');
+        Route::post('/expense_entries_destroy', 'destroyExpense')->name('expense_entries.destroy');
+    });
+
+    Route::controller(ReportController::class)->group(function () {
+        Route::get('/reports', 'index')->name('reports');
+        Route::post('/reports_output', 'generate')->name('generate.reports');
+
+        Route::get('export/{type}/{id}', 'export')->name('export');
+        Route::get('exportPdf/{type}/{id}', 'exportToPdf')->name('export_pdf');
     });
 });
 

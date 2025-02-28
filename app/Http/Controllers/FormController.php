@@ -45,12 +45,23 @@ class FormController extends Controller
                     ->get();
                 return view('budget_entries.create_form', $data);
 
-            case 'createExpenseEntry':
+            case 'createRequestEntry':
+                $header = BudgetHeader::select('id')->where('status', 1)->first();
                 $data['budget_entries'] = BudgetEntry::select('id', 'name')
+                    ->where('status', 1)
+                    ->where('header_id', $header->id)
+                    ->orderBy('name')
+                    ->get();
+                return view('request_entries.create_form', $data);
+
+            case 'createCategoryReport':
+                $data['headers'] = BudgetHeader::select('id', 'name')->where('status', '>=', 1)->get();
+                $data['departments'] = Department::select('id', 'name')->where('status', 1)->where('id', '!=', 1)->get();
+                $data['categories'] = Category::select('id', 'name')
                     ->where('status', 1)
                     ->orderBy('name')
                     ->get();
-                return view('expense_entries.create_form', $data);
+                return view('report.category_report_form', $data);
 
             default:
                 return "No form found";
@@ -96,12 +107,18 @@ class FormController extends Controller
                     ->get();
                 return view('budget_entries.create_form', $data);
 
-            case 'editExpenseEntry':
+            case 'editRequestEntry':
                 $data['entry'] = ExpenseEntry::find($id);
+                $header = BudgetHeader::select('id')->where('status', 1)->first();
                 $data['budget_entries'] = BudgetEntry::select('id', 'name')
                     ->where('status', 1)
+                    ->where('header_id', $header->id)
                     ->orderBy('name')
                     ->get();
+                return view('request_entries.create_form', $data);
+
+            case 'editExpenseEntry':
+                $data['entry'] = ExpenseEntry::find($id);
                 return view('expense_entries.create_form', $data);
 
             default:
@@ -113,14 +130,16 @@ class FormController extends Controller
         switch ($type) {
             case 'viewBudgetEntry':
                 $data['budget'] = BudgetEntry::find($id);
-                $data['expenses'] = ExpenseEntry::where(['budget_entry_id' => $id, 'status' => 1])->get();
+                $data['expenses'] = ExpenseEntry::where('budget_entry_id', $id)
+                    ->where('status', '>=', 1)
+                    ->get();
 //                return $data['budget'];
                 return view('budget_entries.view_form', $data);
 
-            case 'viewExpenseEntry':
+            case 'viewRequestEntry':
                 $data['expenses'] = ExpenseEntry::find($id);
 //                dd($data['expenses']->name);
-                return view('expense_entries.view_form', $data);
+                return view('request_entries.view_form', $data);
 
             default:
                 return "No form found";
@@ -144,8 +163,8 @@ class FormController extends Controller
             case 'deleteBudgetEntry':
                 return view('budget_entries.delete_form', ['budget_entries' => $id]);
 
-            case 'deleteExpenseEntry':
-                return view('expense_entries.delete_form', ['expense_entries' => $id]);
+            case 'deleteRequestEntry':
+                return view('request_entries.delete_form', ['request_entries' => $id]);
 
             default:
                 return "No form found";

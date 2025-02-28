@@ -35,43 +35,43 @@
                     </a>
                 </li>
 
-                <li class="nav-item {{ request()->is('budget_entries') ? 'active' : '' }}">
-                    <a href="{{ route('budget_entries') }}">
-                        <i class="fas fa-money-bill-alt"></i>
-                        <p>Budget Management</p>
-                    </a>
-                </li>
+                @if(in_array(Auth()->user()->is_admin, perm_arrays('users')))
+                    <li class="nav-item {{ request()->is('budget_entries') ? 'active' : '' }}">
+                        <a href="{{ route('budget_entries') }}">
+                            <i class="fas fa-money-bill-alt"></i>
+                            <p>Budget Management</p>
+                        </a>
+                    </li>
+                @endif
 
-                <li class="nav-item {{ request()->is('expense_entries') ? 'active' : '' }}">
-                    <a href="{{ route('expense_entries') }}">
-                        <i class="fas fa-coins"></i>
-                        <p>Expense Management</p>
-                    </a>
-                </li>
+                @if(in_array(Auth()->user()->is_admin, perm_arrays('users')) || Auth()->user()->is_admin == 3)
+                    <li class="nav-item {{ request()->is('request_entries') ? 'active' : '' }}">
+                        <a href="{{ route('request_entries') }}">
+                            <i class="fas fa-chalkboard-teacher"></i>
+                            <p>Request Management</p>
+                        </a>
+                    </li>
+                @endif
 
-                <li class="nav-item">
-                    <a data-bs-toggle="collapse" href="#forms">
-                        <i class="fas fa-layer-group"></i>
-                        <p>Reports</p>
-                        <span class="caret"></span>
-                    </a>
-                    <div class="collapse" id="forms">
-                        <ul class="nav nav-collapse">
-                            <li>
-                                <a href="forms/forms.html">
-                                    <span class="sub-item">Budget Report</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="forms/forms.html">
-                                    <span class="sub-item">Expense Report</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
+                @if(in_array(Auth()->user()->is_admin, perm_arrays('users')) || Auth()->user()->is_admin == 4)
+                    <li class="nav-item {{ request()->is('expense_entries') ? 'active' : '' }}">
+                        <a href="{{ route('expense_entries') }}">
+                            <i class="fas fa-coins"></i>
+                            <p>Expense Management</p>
+                        </a>
+                    </li>
+                @endif
 
-                @if(Auth()->user()->is_admin === 1)
+{{--                @if(in_array(Auth()->user()->is_admin, perm_arrays('users')))--}}
+                    <li class="nav-item {{ request()->is('reports') ? 'active' : '' }} {{ request()->is('reports_output') ? 'active' : '' }}">
+                        <a href="{{ route('reports') }}">
+                            <i class="far fa-chart-bar"></i>
+                            <p>Reports</p>
+                        </a>
+                    </li>
+{{--                @endif--}}
+
+                @if(Auth()->user()->is_admin === 1 || Auth()->user()->is_admin === 0)
                     <li class="nav-item
                      {{ request()->is('categories') ? 'active' : '' }}
                      {{ request()->is('departments') ? 'active' : '' }}
@@ -106,7 +106,9 @@
                             </ul>
                         </div>
                     </li>
+                @endif
 
+                @if(Auth()->user()->is_admin === 1)
                     <li class="nav-item {{ request()->is('users') ? 'active' : '' }}">
                         <a href="{{ route('users') }}">
                             <i class="fas fa-users"></i>

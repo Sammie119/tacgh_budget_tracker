@@ -22,6 +22,7 @@ return new class extends Migration
             $table->decimal('amount_budgeted', 12, 2);
             $table->decimal('amount_used', 12, 2);
             $table->decimal('amount_requested', 12, 2);
+            $table->decimal('amount_spent', 12, 2)->default(0.00);
             $table->tinyInteger('status')->default(0)->comment('0 - Inactive, 1 - Active');
             $table->bigInteger('created_by');
             $table->bigInteger('updated_by');

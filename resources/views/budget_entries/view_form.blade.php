@@ -59,7 +59,9 @@
                 <tr>
                     <th scope="col" style="width: 5px;">#</th>
                     <th scope="col" style="text-align: left">Name</th>
-                    <th scope="col" style="text-align: right">Amount</th>
+                    <th scope="col" style="text-align: center;">Date</th>
+                    <th scope="col" style="text-align: right">Amt. Requested</th>
+                    <th scope="col" style="text-align: right">Amt. Spent</th>
                 </tr>
             </thead>
             <tbody>
@@ -68,26 +70,28 @@
                 @endphp
                 @forelse($expenses as $key => $expense)
                     @php
-                        $total += $expense->amount_requested;
+                        $total += $expense->amount_spent;
                     @endphp
                     <tr>
                         <td>{{ ++$key }}</td>
                         <td style="text-align: left">{{ $expense->name }}</td>
-                        <td style="text-align: right">{{ number_format($expense->amount_requested, 2) }}</td>
+                        <td style="text-align: center" nowrap>{{ $expense->created_at->format('d-M-Y') }}</td>
+                        <td style="text-align: right" nowrap>{{ number_format($expense->amount_requested, 2) }}</td>
+                        <td style="text-align: right" nowrap>{{ number_format($expense->amount_spent, 2) }}</td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="4">No Data Found</td>
+                        <td colspan="10">No Data Found</td>
                     </tr>
                 @endforelse
             </tbody>
             <tfoot>
                 <tr>
-                    <th colspan="2">Total</th>
-                    <th style="text-align: right">{{ number_format($total, 2) }}</th>
+                    <th colspan="3">Total</th>
+                    <th colspan="2" style="text-align: right">{{ number_format($total, 2) }}</th>
                 </tr>
                 <tr>
-                    <th colspan="2">Amount Remaining</th>
+                    <th colspan="3">Amount Remaining</th>
                     <th colspan="2" style="text-align: right">{{ number_format(($budget->amount - $total), 2) }}</th>
                 </tr>
             </tfoot>

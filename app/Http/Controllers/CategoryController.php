@@ -32,6 +32,7 @@ class CategoryController extends Controller
         Category::firstOrCreate(
             [
                 'name' => $request->name,
+                'code' => $request->code,
             ],
             [
                 'description' => $request->description,
@@ -58,6 +59,7 @@ class CategoryController extends Controller
         Category::find($request->id)->update(
             [
                 'name' => $request->name,
+                'code' => $request->code,
                 'description' => $request->description,
                 'status' => $request->status,
                 'updated_by' => Auth::user()->id,

@@ -31,6 +31,11 @@ class BudgetHeaderController extends Controller
             'status' => ['required']
         ]);
 
+        $header = BudgetHeader::where('status', 1)->count();
+        if ($header > 0 && $request->status == 1) {
+            return redirect(route('budget_headers', absolute: false))->with('error', 'There an Already Active Budget Header');
+        }
+
         BudgetHeader::firstOrCreate(
             [
                 'name' => $request->name,
@@ -60,6 +65,12 @@ class BudgetHeaderController extends Controller
             'end_date' => ['required'],
             'status' => ['required']
         ]);
+
+        $header = BudgetHeader::where('status', 1)->count();
+        $header_id = BudgetHeader::where('status', 1)->first();
+        if ($header > 0 && $request->status == 1 && $header_id->id != $request->id) {
+            return redirect(route('budget_headers', absolute: false))->with('error', 'There an Already Active Budget Header');
+        }
 
         BudgetHeader::find($request->id)->update(
             [

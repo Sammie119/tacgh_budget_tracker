@@ -1,7 +1,7 @@
 <form method="POST" action="{{ route('request_entries.destroy') }}">
     @csrf
 
-    <input type="hidden" name="id" value="{{ $expense_entries }}">
+    <input type="hidden" name="id" value="{{ $request_entries }}">
 
     <label>Deleting this record is an irreversible action. Do you want to continue...?</label>
 

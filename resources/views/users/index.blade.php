@@ -58,7 +58,7 @@
                                                 <td>{{ ++$key }}</td>
                                                 <td>{{ $user->name }}</td>
                                                 <td>{{ $user->email }}</td>
-                                                <td>{{ ($user->is_admin === 1) ? 'Admin' : 'User' }}</td>
+                                                <td>{{ getIsAdmin($user->is_admin) }}</td>
                                                 <td>{{ $user->created_at->format('d-M-Y') }}</td>
                                                 <td nowrap>
                                                     <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-title="Edit User Details" data-bs-url="form_edit/editUser/{{ $user->id }}" data-bs-size="modal-lg"><span class="btn-label"><i class="far fa-edit"></i></span></button>
