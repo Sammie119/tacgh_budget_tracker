@@ -47,7 +47,7 @@ class FormController extends Controller
 
             case 'createRequestEntry':
                 $header = BudgetHeader::select('id')->where('status', 1)->first();
-                $data['budget_entries'] = BudgetEntry::select('id', 'name')
+                $data['budget_entries'] = BudgetEntry::select('id', 'name', 'department_id')
                     ->where('status', 1)
                     ->where('header_id', $header->id)
                     ->orderBy('name')
@@ -110,7 +110,7 @@ class FormController extends Controller
             case 'editRequestEntry':
                 $data['entry'] = ExpenseEntry::find($id);
                 $header = BudgetHeader::select('id')->where('status', 1)->first();
-                $data['budget_entries'] = BudgetEntry::select('id', 'name')
+                $data['budget_entries'] = BudgetEntry::select('id', 'name', 'department_id')
                     ->where('status', 1)
                     ->where('header_id', $header->id)
                     ->orderBy('name')

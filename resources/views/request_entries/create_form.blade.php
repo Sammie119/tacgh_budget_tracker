@@ -27,13 +27,14 @@
     <div class="mb-3 row">
         <label for="" class="col-sm-3 col-form-label">Budget Entry</label>
         <div class="col-sm-9">
-            <input list="options" name="budget_entry_id" class="form-control" id="budgetEntry" value="@isset($entry) {{ \App\Models\BudgetEntry::find($entry->budget_entry_id)->name }} @endisset" required>
+            <input list="options" class="form-control" id="budgetEntry" value="@isset($entry) {{ \App\Models\BudgetEntry::find($entry->budget_entry_id)->name }} - {{ \App\Models\Department::find($entry->department_id)->name }}@endisset" required>
             <div id="showBudget" style="display: none"><span>Allocation: </span> <label id="allocation">00000000</label> <span style="margin-left: 20px">Remaining: </span><label id="remaining">00000000</label></div>
             <datalist id="options">
                 @foreach ($budget_entries as $option)
-                    <option value="{{ $option->name }}">
+                    <option data-value="{{ $option->id }}">{{ $option->name }} - {{ \App\Models\Department::find($option->department_id)->name }}</option>
                 @endforeach
             </datalist>
+            <input type="hidden" name="budget_entry_id" value="@isset($entry) {{ $entry->budget_entry_id }} @endisset" id="budgetEntry-hidden">
         </div>
     </div>
 
@@ -70,8 +71,28 @@
 </form>
 
 <script>
+    document.querySelector('input[list]').addEventListener('input', function(e) {
+        var input = e.target,
+            list = input.getAttribute('list'),
+            options = document.querySelectorAll('#' + list + ' option'),
+            hiddenInput = document.getElementById(input.getAttribute('id') + '-hidden'),
+            inputValue = input.value;
+
+        hiddenInput.value = inputValue;
+
+        for(var i = 0; i < options.length; i++) {
+            var option = options[i];
+
+            if(option.innerText === inputValue) {
+                hiddenInput.value = option.getAttribute('data-value');
+                break;
+            }
+        }
+    });
+
+
     $("#budgetEntry").change(function(){
-        let budget_entry = $("#budgetEntry").val();
+        let budget_entry = $("#budgetEntry-hidden").val();
         // alert(budget_entry)
         $.ajax({
             type:'GET',

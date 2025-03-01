@@ -101,7 +101,8 @@ class BudgetEntryController extends Controller
 
     public function getBudgetEntry(Request $request)
     {
-        $budget_entry = VWBudgetEntry::where(['name' => $request->budget_entry, 'status' => 1])->first();
+        $budget_entry = VWBudgetEntry::where(['id' => $request->budget_entry, 'status' => 1])->first();
+//        dd($budget_entry, $request->budget_entry);
         if($budget_entry){
             $result = [
                 'amount' => $budget_entry->amount,

@@ -11,7 +11,7 @@ class ExpenseEntryController extends Controller
 {
     private function getBudgetEntryID($name)
     {
-        $budget_entry = BudgetEntry::where(['name' => $name, 'status' => 1])->first();
+        $budget_entry = BudgetEntry::where(['id' => $name, 'status' => 1])->first();
 
         if($budget_entry){
             return $budget_entry;
