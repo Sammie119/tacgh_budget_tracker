@@ -82,7 +82,67 @@
                         <th class="t_align">{{ number_format($total_amount_requested, 2) }}</th>
                         <th class="t_align">{{ number_format($total_amount_spent, 2) }}</th>
                         <th class="t_align">{{ number_format($total_variance, 2) }}</th>
-                        <th>{{ round(($total_amount_spent/$total_amount) * 100, 2) }}%</th>
+                        <th>{{ ($total_amount > 0) ? round(($total_amount_spent/$total_amount) * 100, 2) : 0 }}%</th>
+                    </tr>
+                </tfoot>
+            </table>
+            @break
+
+        @case('departmentalReport')
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 20px" class="no-sort">#</th>
+                        <th>Category</th>
+                        <th>Budget Entry</th>
+                        <th>Department</th>
+                        <th class="t_align">Amt. Allocated</th>
+                        <th class="t_align">Amt. Requested</th>
+                        <th class="t_align">Amt. Spent</th>
+                        <th class="t_align">Variance</th>
+                        <th>%</th>
+                    </tr>
+                </thead>
+                @php
+                    $total_amount = 0;
+                    $total_amount_requested = 0;
+                    $total_amount_spent = 0;
+                    $total_variance = 0;
+                    $total_percentage = 0;
+                @endphp
+                <tbody>
+                @forelse($results as $key => $result)
+                    @php
+                        $total_amount += $result['amount'];
+                        $total_amount_requested += $result['amount_requested'];
+                        $total_amount_spent += $result['amount_used'];
+                        $total_variance += $result['amount'] - $result['amount_used'];
+                    @endphp
+                    <tr>
+                        <td>{{ ++$key }}</td>
+                        <td>{{ $result['category'] }}</td>
+                        <td>{{ $result['budget_entry'] }}</td>
+                        <td>{{ $result['department'] }}</td>
+                        <td class="t_align">{{ number_format($result['amount'], 2) }}</td>
+                        <td class="t_align">{{ number_format($result['amount_requested'], 2) }}</td>
+                        <td class="t_align">{{ number_format($result['amount_used'], 2) }}</td>
+                        <td class="t_align">{{ number_format($result['variance'], 2) }}</td>
+                        <td>{{ $result['percentage']}}</td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="50">No Data Found</td>
+                    </tr>
+                @endforelse
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="4">Total</th>
+                        <th class="t_align">{{ number_format($total_amount, 2) }}</th>
+                        <th class="t_align">{{ number_format($total_amount_requested, 2) }}</th>
+                        <th class="t_align">{{ number_format($total_amount_spent, 2) }}</th>
+                        <th class="t_align">{{ number_format($total_variance, 2) }}</th>
+                        <th>{{ ($total_amount > 0) ? round(($total_amount_spent/$total_amount) * 100, 2) : 0 }}%</th>
                     </tr>
                 </tfoot>
             </table>

@@ -63,6 +63,11 @@ class FormController extends Controller
                     ->get();
                 return view('report.category_report_form', $data);
 
+            case 'createDepartmentalReport':
+                $data['headers'] = BudgetHeader::select('id', 'name')->where('status', '>=', 1)->get();
+                $data['departments'] = Department::select('id', 'name')->where('status', 1)->where('id', '!=', 1)->get();
+                return view('report.departmental_report_form', $data);
+
             default:
                 return "No form found";
         }
