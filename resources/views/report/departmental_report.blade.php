@@ -79,7 +79,7 @@
                             Illuminate\Support\Facades\Cache::put('departmental_report', collect($data_array), now()->addHours(3));
                         @endphp
                         <tr>
-                            <th colspan="3">Total</th>
+                            <th colspan="4">Total</th>
                             <th>{{ number_format($total_amount, 2) }}</th>
                             <th>{{ number_format($total_amount_requested, 2) }}</th>
                             <th>{{ number_format($total_amount_spent, 2) }}</th>
