@@ -35,7 +35,7 @@
                     </a>
                 </li>
 
-                @if(in_array(Auth()->user()->is_admin, perm_arrays('users')))
+                @if(in_array(Auth()->user()->is_admin, perm_arrays('users')) || Auth()->user()->is_admin == 5)
                     <li class="nav-item {{ request()->is('budget_entries') ? 'active' : '' }}">
                         <a href="{{ route('budget_entries') }}">
                             <i class="fas fa-money-bill-alt"></i>

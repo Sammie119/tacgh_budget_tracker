@@ -38,10 +38,13 @@
                             $total_variance = 0;
                             $total_percentage = 0;
                             $data_array = [];
+
+                            $result_amount = 0;
                         @endphp
                         <tbody>
                         @forelse($results as $key => $result)
                             @php
+                                $result_amount = $result->amount;
                                 $total_amount += $result->amount;
                                 $total_amount_requested += $result->amount_requested;
                                 $total_amount_spent += $result->amount_used;
@@ -84,7 +87,7 @@
                             <th>{{ number_format($total_amount_requested, 2) }}</th>
                             <th>{{ number_format($total_amount_spent, 2) }}</th>
                             <th>{{ number_format($total_variance, 2) }}</th>
-                            <th>{{ ($result->amount > 0) ? round(($total_amount_spent/$total_amount) * 100, 2) : 0 }}%</th>
+                            <th>{{ ($result_amount > 0) ? round(($total_amount_spent/$total_amount) * 100, 2) : 0 }}%</th>
                         </tr>
                         </tbody>
 

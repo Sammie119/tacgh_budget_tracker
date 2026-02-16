@@ -52,11 +52,15 @@
                                             <th>Category</th>
                                             <th>B. Header</th>
                                             <th>Amount</th>
+                                            <th>Ref</th>
                                             <th style="width: 140px" class="no-sort">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         @forelse($budget_entries as $key => $budget)
+                                            @php
+                                                $ref = "TBT".sprintf("%06d", $budget->id);
+                                            @endphp
                                             <tr>
                                                 <td>{{ ++$key }}</td>
                                                 <td>{{ $budget->name }}</td>
@@ -64,6 +68,7 @@
                                                 <td>{{ \App\Models\Category::find($budget->category_id)->name }}</td>
                                                 <td>{{ \App\Models\BudgetHeader::find($budget->header_id)->name }}</td>
                                                 <td>{{ number_format($budget->amount, 2) }}</td>
+                                                <td>{{ $ref }}</td>
                                                 <td nowrap>
                                                     <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-title="View Budget Details" data-bs-url="form_view/viewBudgetEntry/{{ $budget->id }}" data-bs-size="modal-lg"><span class="btn-label"><i class="fas fa-table"></i></span></button>
                                                     @if(in_array(Auth()->user()->is_admin, perm_arrays('management')))
