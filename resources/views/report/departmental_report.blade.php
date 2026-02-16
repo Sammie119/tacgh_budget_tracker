@@ -29,6 +29,7 @@
                             <th>Amt. Spent</th>
                             <th>Variance</th>
                             <th>%</th>
+                            <th>Ref</th>
                         </tr>
                         </thead>
                         @php
@@ -42,6 +43,7 @@
                         <tbody>
                         @forelse($results as $key => $result)
                             @php
+                                $ref = "TBT".sprintf("%06d", $result->id);
                                 $total_amount += $result->amount;
                                 $total_amount_requested += $result->amount_requested;
                                 $total_amount_spent += $result->amount_used;
@@ -69,6 +71,7 @@
                                 <td>{{ number_format($result->amount_used, 2) }}</td>
                                 <td>{{ number_format(($result->amount - $result->amount_used), 2) }}</td>
                                 <td>{{ ($result->amount > 0) ? round(($result->amount_used/$result->amount) * 100, 2) : 0 }}%</td>
+                                <td>{{ $ref }}</td>
                             </tr>
                         @empty
                             <tr>
@@ -85,6 +88,7 @@
                             <th>{{ number_format($total_amount_spent, 2) }}</th>
                             <th>{{ number_format($total_variance, 2) }}</th>
                             <th>{{ ($result->amount > 0) ? round(($total_amount_spent/$total_amount) * 100, 2) : 0 }}%</th>
+                            <th></th>
                         </tr>
                         </tbody>
 
