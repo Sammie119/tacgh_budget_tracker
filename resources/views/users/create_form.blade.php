@@ -22,8 +22,8 @@
         <label for="" class="col-sm-3 col-form-label">User Level</label>
         <div class="col-sm-9">
             <x-input-select
-                :options="['Admin', 'Management', 'Audit Staff', 'Finance Staff', 'Memo User]"
-                :selected="isset($user) ? $user->is_admin : 5"
+                :options="['Admin', 'Management', 'Audit Staff', 'Finance Staff', 'Memo User']"
+                :selected="isset($user) ? $user->is_admin : 10"
                 :values="[0, 2, 3, 4, 5]"
                 name="is_admin"
                 :type="1"
