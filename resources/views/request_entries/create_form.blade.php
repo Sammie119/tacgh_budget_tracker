@@ -31,7 +31,10 @@
             <div id="showBudget" style="display: none"><span>Allocation: </span> <label id="allocation">00000000</label> <span style="margin-left: 20px">Remaining: </span><label id="remaining">00000000</label></div>
             <datalist id="options">
                 @foreach ($budget_entries as $option)
-                    <option data-value="{{ $option->id }}">{{ $option->name }} - {{ \App\Models\Department::find($option->department_id)->name }}</option>
+                    @php
+                        $ref = "TBT".sprintf("%06d", $option->id);
+                    @endphp
+                    <option data-value="{{ $option->id }}">{{ $option->name }} - {{ \App\Models\Department::find($option->department_id)->name }} - {{ $ref }}</option>
                 @endforeach
             </datalist>
             <input type="hidden" name="budget_entry_id" value="@isset($entry) {{ $entry->budget_entry_id }} @endisset" id="budgetEntry-hidden">
