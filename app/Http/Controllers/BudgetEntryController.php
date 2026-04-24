@@ -14,7 +14,9 @@ class BudgetEntryController extends Controller
      */
     public function index()
     {
-        $data['budget_entries'] = BudgetEntry::orderByDesc('header_id')->get();
+        $data['budget_entries'] = BudgetEntry::with(['department', 'category', 'budgetHeader'])
+            ->orderByDesc('header_id')
+            ->get();
         return view('budget_entries.index', $data);
     }
 

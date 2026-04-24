@@ -45,40 +45,40 @@
                                     class="display table table-striped table-hover"
                                 >
                                     <thead>
-                                        <tr>
-                                            <th style="width: 20px" class="no-sort">#</th>
-                                            <th>Name</th>
-                                            <th>Memo Ref</th>
-                                            <th>Department</th>
-                                            <th>Category</th>
-                                            <th>Budget Entry</th>
-                                            <th>Amount</th>
-                                            <th style="width: 140px" class="no-sort">Actions</th>
-                                        </tr>
+                                    <tr>
+                                        <th style="width: 20px" class="no-sort">#</th>
+                                        <th>Name</th>
+                                        <th>Memo Ref</th>
+                                        <th>Department</th>
+                                        <th>Category</th>
+                                        <th>Budget Entry</th>
+                                        <th>Amount</th>
+                                        <th style="width: 140px" class="no-sort">Actions</th>
+                                    </tr>
                                     </thead>
                                     <tbody>
-                                        @forelse($expense_entries as $key => $expense)
-                                            <tr>
-                                                <td>{{ ++$key }}</td>
-                                                <td>{{ $expense->name }}</td>
-                                                <td>{{ $expense->description }}</td>
-                                                <td>{{ \App\Models\Department::find($expense->department_id)->name }}</td>
-                                                <td>{{ \App\Models\Category::find($expense->category_id)->name }}</td>
-                                                <td>{{ \App\Models\BudgetEntry::find($expense->budget_entry_id)->name }}</td>
-                                                <td>{{ number_format($expense->amount_requested, 2) }}</td>
-                                                <td nowrap>
-                                                    <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-title="View Request Details" data-bs-url="form_view/viewRequestEntry/{{ $expense->id }}" data-bs-size="modal-lg"><span class="btn-label"><i class="fas fa-table"></i></span></button>
-                                                    @if(in_array(Auth()->user()->is_admin, perm_arrays('management')))
-                                                        <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-title="Edit Request Details" data-bs-url="form_edit/editRequestEntry/{{ $expense->id }}" data-bs-size="modal-lg"><span class="btn-label"><i class="far fa-edit"></i></span></button>
-                                                        <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-title="Confirm Deletion" data-bs-url="form_delete/deleteRequestEntry/{{ $expense->id }}" data-bs-size=""><span class="btn-label"><i class="fas fa-trash-alt"></i></span></button>
-                                                    @endif
-                                                </td>
-                                            </tr>
-                                        @empty
-                                            <tr>
-                                                <td colspan="50">No Data Found</td>
-                                            </tr>
-                                        @endforelse
+                                    @forelse($expense_entries as $key => $expense)
+                                        <tr>
+                                            <td>{{ ++$key }}</td>
+                                            <td>{{ $expense->name }}</td>
+                                            <td>{{ $expense->description }}</td>
+                                            <td>{{ $expense->department->name ?? 'N/A' }}</td>
+                                            <td>{{ $expense->category->name ?? 'N/A' }}</td>
+                                            <td>{{ $expense->budgetEntry->name ?? 'N/A' }}</td>
+                                            <td>{{ number_format($expense->amount_requested, 2) }}</td>
+                                            <td nowrap>
+                                                <button class="btn btn-success btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-title="View Request Details" data-bs-url="form_view/viewRequestEntry/{{ $expense->id }}" data-bs-size="modal-lg"><span class="btn-label"><i class="fas fa-table"></i></span></button>
+                                                @if(in_array(Auth()->user()->is_admin, perm_arrays('management')))
+                                                    <button class="btn btn-info btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-title="Edit Request Details" data-bs-url="form_edit/editRequestEntry/{{ $expense->id }}" data-bs-size="modal-lg"><span class="btn-label"><i class="far fa-edit"></i></span></button>
+                                                    <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#exampleModal" data-bs-title="Confirm Deletion" data-bs-url="form_delete/deleteRequestEntry/{{ $expense->id }}" data-bs-size=""><span class="btn-label"><i class="fas fa-trash-alt"></i></span></button>
+                                                @endif
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="50">No Data Found</td>
+                                        </tr>
+                                    @endforelse
                                     </tbody>
                                 </table>
                             </div>

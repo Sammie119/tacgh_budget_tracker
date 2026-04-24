@@ -22,13 +22,16 @@ class ExpenseEntryController extends Controller
      */
     public function index()
     {
-        $data['expense_entries'] = ExpenseEntry::orderByDesc('created_at')->get();
+        $data['expense_entries'] = ExpenseEntry::with(['department', 'category', 'budgetEntry'])
+            ->orderByDesc('created_at')
+            ->get();
         return view('request_entries.index', $data);
     }
 
     public function indexExpense()
     {
-        $data['expense_entries'] = ExpenseEntry::where('status', '>=', 1)
+        $data['expense_entries'] = ExpenseEntry::with(['department', 'budgetEntry'])
+            ->where('status', '>=', 1)
             ->orderByDesc('created_at')
             ->get();
         return view('expense_entries.index', $data);

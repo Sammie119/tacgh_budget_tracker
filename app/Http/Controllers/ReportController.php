@@ -58,6 +58,7 @@ class ReportController extends Controller
                 }
 
                 $data['results'] = $query
+                    ->with(['department', 'category'])
                     ->where('status', '>=', 1)
                     ->orderBy('created_at')
                     ->get();
@@ -101,8 +102,10 @@ class ReportController extends Controller
                 }
 
                 $data['results'] = $query
+                    ->with(['department', 'category'])
                     ->where('status', '>=', 1)
-                    ->orderBy('category_id', 'asc', 'department_id', 'asc')
+                    ->orderBy('category_id', 'asc')
+                    ->orderBy('department_id', 'asc')
                     ->get();
                 $data['header'] = [
                     'header_name' => "Directorate Report on $budget_header->name",
@@ -142,7 +145,7 @@ class ReportController extends Controller
                 ];
 //                dd($data['results']);
                 $pdf = Pdf::loadView('report.report_pdf_output', $data)
-                        ->setPaper('A4', 'landscape');
+                    ->setPaper('A4', 'landscape');
 
                 return $pdf->download('category_report.pdf');
 

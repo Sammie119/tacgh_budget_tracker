@@ -37,35 +37,35 @@
                             $total_amount_requested = 0;
                             $total_amount_spent = 0;
                             $total_variance = 0;
-                            $total_percentage = 0;
                             $data_array = [];
                         @endphp
                         <tbody>
                         @forelse($results as $key => $result)
                             @php
                                 $ref = "TBT".sprintf("%06d", $result->id);
+                                $cat_name = $result->category->name ?? 'N/A';
+                                $dept_name = $result->department->name ?? 'N/A';
                                 $total_amount += $result->amount;
                                 $total_amount_requested += $result->amount_requested;
                                 $total_amount_spent += $result->amount_used;
                                 $total_variance += $result->amount - $result->amount_used;
-                                $total_percentage += 0;
 
                                 $data_array[] = [
-                                    'category' => \App\Models\Category::find($result->category_id)->name,
+                                    'category' => $cat_name,
                                     'budget_entry' => $result->name,
-                                    'department' => \App\Models\Department::find($result->department_id)->name,
+                                    'department' => $dept_name,
                                     'amount' => $result->amount,
                                     'amount_requested' => $result->amount_requested,
                                     'amount_used' => $result->amount_used,
                                     'variance' => $result->amount - $result->amount_used,
-                                    'percentage' => ($result->amount > 0) ? (($result->amount_used/$result->amount) * 100)."%" : '0%'
+                                    'percentage' => ($result->amount > 0) ? round(($result->amount_used/$result->amount) * 100, 2)."%" : '0%'
                                 ];
                             @endphp
                             <tr>
                                 <td>{{ ++$key }}</td>
-                                <td>{{ \App\Models\Category::find($result->category_id)->name }}</td>
+                                <td>{{ $cat_name }}</td>
                                 <td>{{ $result->name }}</td>
-                                <td>{{ \App\Models\Department::find($result->department_id)->name }}</td>
+                                <td>{{ $dept_name }}</td>
                                 <td>{{ number_format($result->amount, 2) }}</td>
                                 <td>{{ number_format($result->amount_requested, 2) }}</td>
                                 <td>{{ number_format($result->amount_used, 2) }}</td>
@@ -75,19 +75,19 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="50">No Data Found</td>
+                                <td colspan="10">No Data Found</td>
                             </tr>
                         @endforelse
                         @php
                             Illuminate\Support\Facades\Cache::put('departmental_report', collect($data_array), now()->addHours(3));
                         @endphp
-                        <tr>
+                        <tr class="table-dark fw-bold">
                             <th colspan="4">Total</th>
                             <th>{{ number_format($total_amount, 2) }}</th>
                             <th>{{ number_format($total_amount_requested, 2) }}</th>
                             <th>{{ number_format($total_amount_spent, 2) }}</th>
                             <th>{{ number_format($total_variance, 2) }}</th>
-                            <th>{{ ($result->amount > 0) ? round(($total_amount_spent/$total_amount) * 100, 2) : 0 }}%</th>
+                            <th>{{ ($total_amount > 0) ? round(($total_amount_spent/$total_amount) * 100, 2) : 0 }}%</th>
                             <th></th>
                         </tr>
                         </tbody>

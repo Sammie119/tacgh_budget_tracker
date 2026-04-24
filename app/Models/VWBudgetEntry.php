@@ -12,4 +12,19 @@ class VWBudgetEntry extends Model
     protected $table = 'vw_budget_entries';
 
     protected $primaryKey = 'id';
+
+    public function department()
+    {
+        return $this->belongsTo(Department::class, 'department_id');
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class, 'category_id');
+    }
+
+    public function budgetHeader()
+    {
+        return $this->belongsTo(BudgetHeader::class, 'header_id');
+    }
 }
