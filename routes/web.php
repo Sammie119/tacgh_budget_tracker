@@ -75,6 +75,8 @@ Route::middleware('auth')->group(function () {
 //        Route::post('/expense_entries', 'storeExpense')->name('expense_entries.store');
         Route::put('/expense_entries', 'updateExpense')->name('expense_entries.update');
         Route::post('/expense_entries_destroy', 'destroyExpense')->name('expense_entries.destroy');
+        Route::post('/expense_entries/import', 'importExpense')->name('expense_entries.import');
+        Route::get('/expense_entries/template', 'downloadExpenseTemplate')->name('expense_entries.template');
     });
 
     Route::controller(ReportController::class)->group(function () {

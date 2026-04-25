@@ -148,8 +148,56 @@
             </table>
             @break
 
-        @case('summaryReport')
-            Coming Soon
+        @case('utilisationReport')
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width:20px">#</th>
+                        <th>Category</th>
+                        <th>Budget Entry</th>
+                        <th>Department</th>
+                        <th class="t_align">Amt. Allocated</th>
+                        <th class="t_align">Amt. Spent</th>
+                        <th class="t_align">Remaining</th>
+                        <th class="t_align">Utilisation (%)</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                @php $total_amount = 0; $total_spent = 0; @endphp
+                <tbody>
+                @forelse($results as $key => $row)
+                    @php
+                        $total_amount += $row['amount'];
+                        $total_spent  += $row['amount_used'];
+                    @endphp
+                    <tr>
+                        <td>{{ ++$key }}</td>
+                        <td>{{ $row['category'] }}</td>
+                        <td>{{ $row['budget_entry'] }}</td>
+                        <td>{{ $row['department'] }}</td>
+                        <td class="t_align">{{ number_format($row['amount'], 2) }}</td>
+                        <td class="t_align">{{ number_format($row['amount_used'], 2) }}</td>
+                        <td class="t_align">{{ number_format($row['remaining'], 2) }}</td>
+                        <td class="t_align">{{ $row['utilisation_pct'] }}%</td>
+                        <td>{{ $row['status'] }}</td>
+                    </tr>
+                @empty
+                    <tr><td colspan="9">No Data Found</td></tr>
+                @endforelse
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th colspan="4">Total</th>
+                        <th class="t_align">{{ number_format($total_amount, 2) }}</th>
+                        <th class="t_align">{{ number_format($total_spent, 2) }}</th>
+                        <th class="t_align">{{ number_format($total_amount - $total_spent, 2) }}</th>
+                        <th class="t_align">{{ $total_amount > 0 ? round(($total_spent / $total_amount) * 100, 2) : 0 }}%</th>
+                        <th></th>
+                    </tr>
+                </tfoot>
+            </table>
+            @break
+
         @default
             No Results
     @endswitch

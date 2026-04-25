@@ -23,6 +23,59 @@
 
             <x-notifications :messages="$errors->all()"/>
 
+            {{-- ── Bulk Excel Import panel (management only) ── --}}
+            @if(in_array(Auth()->user()->is_admin, perm_arrays('management')))
+                <div class="row mb-4">
+                    <div class="col-md-12">
+                        <div class="card border-0"
+                             style="background:linear-gradient(135deg,#f0fdf4,#dcfce7);
+                                border-left:4px solid #198754 !important;
+                                border-radius:12px;
+                                box-shadow:0 2px 12px rgba(25,135,84,0.08);">
+                            <div class="card-body py-3 px-4">
+                                <div class="d-flex flex-wrap align-items-start gap-3">
+                                    <div class="flex-grow-1">
+                                        <div style="font-size:14px;font-weight:700;color:#14532d;margin-bottom:4px">
+                                            <i class="fas fa-file-upload me-1"></i> Bulk Expense Upload
+                                        </div>
+                                        <div style="font-size:12px;color:#166534;line-height:1.6;">
+                                            Upload an Excel file with <strong>id</strong> and <strong>amount_spent</strong>
+                                            columns to update multiple expense entries at once.
+                                            Each row is matched by expense ID; the amount is saved and the entry is marked as complete.
+                                        </div>
+                                    </div>
+                                    <a href="{{ route('expense_entries.template') }}"
+                                       class="btn btn-sm btn-outline-success flex-shrink-0"
+                                       style="white-space:nowrap;margin-top:2px">
+                                        <i class="fas fa-download me-1"></i> Download Template
+                                    </a>
+                                </div>
+
+                                <form action="{{ route('expense_entries.import') }}"
+                                      method="POST"
+                                      enctype="multipart/form-data"
+                                      class="mt-3 d-flex align-items-center gap-2 flex-wrap">
+                                    @csrf
+                                    <input type="file"
+                                           name="import_file"
+                                           id="import_file"
+                                           class="form-control form-control-sm @error('import_file') is-invalid @enderror"
+                                           accept=".xlsx,.xls,.csv"
+                                           style="max-width:340px"
+                                           required>
+                                    @error('import_file')
+                                    <div class="invalid-feedback">{{ $message }}</div>
+                                    @enderror
+                                    <button type="submit" class="btn btn-success btn-sm">
+                                        <i class="fas fa-upload me-1"></i> Upload &amp; Process
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif
+
             <div class="row">
                 <div class="col-md-12">
                     <div class="card">
@@ -45,6 +98,7 @@
                                     <thead>
                                     <tr>
                                         <th style="width: 20px" class="no-sort">#</th>
+                                        <th>ID</th>
                                         <th>Name</th>
                                         <th>Memo Ref</th>
                                         <th>Department</th>
@@ -60,6 +114,7 @@
                                     @forelse($expense_entries as $key => $expense)
                                         <tr>
                                             <td>{{ ++$key }}</td>
+                                            <td>{{ $expense->id }}</td>
                                             <td>{{ $expense->name }}</td>
                                             <td>{{ $expense->description }}</td>
                                             <td>{{ $expense->department->name ?? 'N/A' }}</td>

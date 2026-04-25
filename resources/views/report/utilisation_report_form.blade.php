@@ -1,6 +1,6 @@
 <form action="{{ route('generate.reports') }}" method="POST">
     @csrf
-    <input type="hidden" name="report_type" value="categoryReport">
+    <input type="hidden" name="report_type" value="utilisationReport">
 
     <div class="modal-body">
         <div class="mb-3">
@@ -14,23 +14,23 @@
         </div>
 
         <div class="mb-3">
-            <label for="department_id" class="form-label fw-semibold">Category <span class="text-danger">*</span></label>
-            <select name="category_id" id="category_id" class="form-select" required>
-                <option value="" disabled selected>— Select Category —</option>
-                @foreach($categories as $ct)
-                    <option value="{{ $ct->id }}">{{ $ct->name }}</option>
+            <label for="department_id" class="form-label fw-semibold">Directorate / Unit <small class="text-muted fw-normal">(optional)</small></label>
+            <select name="department_id" id="department_id" class="form-select">
+                <option value="">— All Directorates —</option>
+                @foreach($departments as $dept)
+                    <option value="{{ $dept->id }}">{{ $dept->name }}</option>
                 @endforeach
             </select>
         </div>
 
         <div class="mb-1">
-            <label for="department_id" class="form-label fw-semibold">Directorate / Unit <small class="text-muted fw-normal">(optional)</small></label>
-            <select name="department_id" id="department_id" class="form-select">
-                <option value="">All Directorates</option>
-                @foreach($departments as $dept)
-                    <option value="{{ $dept->id }}">{{ $dept->name }}</option>
-                @endforeach
-            </select>
+            <label for="threshold" class="form-label fw-semibold">Show only lines at or above utilisation <small class="text-muted fw-normal">(optional)</small></label>
+            <div class="input-group">
+                <input type="number" name="threshold" id="threshold" class="form-control"
+                       min="0" max="200" placeholder="e.g. 80">
+                <span class="input-group-text">%</span>
+            </div>
+            <div class="form-text">Leave blank to show all budget lines.</div>
         </div>
     </div>
 
@@ -41,6 +41,3 @@
         </button>
     </div>
 </form>
-
-
-

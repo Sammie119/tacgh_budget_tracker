@@ -30,6 +30,9 @@
                 @case('departmental_report')
                     @include('report.departmental_report')
                     @break
+                @case('utilisation_report')
+                    @include('report.utilisation_report')
+                    @break
                 @default
                     <h1>No Report Type Selected</h1>
             @endswitch

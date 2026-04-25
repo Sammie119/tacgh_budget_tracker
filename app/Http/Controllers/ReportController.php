@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exports\CategoryReportExport;
 use App\Exports\DepartmentalReportExport;
+use App\Exports\UtilisationReportExport;
 use App\Models\BudgetHeader;
 use App\Models\Category;
 use App\Models\Department;
@@ -114,6 +115,68 @@ class ReportController extends Controller
 
                 return view('report.report_output', $data)->with('success', 'Directorate/Unit Report Generated Successfully!!!');
 
+            case 'utilisationReport':
+                $request->validate([
+                    'header_id' => ['required'],
+                ]);
+
+                $budget_header = BudgetHeader::find($request->header_id);
+
+                $query = VWBudgetEntry::with(['department', 'category'])
+                    ->where('header_id', $request->header_id)
+                    ->where('amount', '>', 0)
+                    ->where('status', '>=', 1);
+
+                if (!empty($request->department_id)) {
+                    $department = Department::find($request->department_id);
+                    if ($department->parent_id == 1) {
+                        $child_ids = Department::select('id')->where('parent_id', $department->id)->pluck('id')->toArray();
+                        $child_ids[] = (int) $request->department_id;
+                        $query->whereIn('department_id', $child_ids);
+                    } else {
+                        $query->where('department_id', $request->department_id);
+                    }
+                }
+
+                $threshold = is_numeric($request->threshold) ? (float) $request->threshold : 0;
+
+                $results = $query->get()
+                    ->map(function ($entry) {
+                        $pct = $entry->amount > 0
+                            ? round(($entry->amount_used / $entry->amount) * 100, 2)
+                            : 0;
+                        $entry->utilisation_pct = $pct;
+                        return $entry;
+                    })
+                    ->filter(fn ($e) => $e->utilisation_pct >= $threshold)
+                    ->sortByDesc('utilisation_pct')
+                    ->values();
+
+                // Cache flat array for PDF / Excel export
+                $data_array = $results->map(fn ($e) => [
+                    'category'       => $e->category->name ?? 'N/A',
+                    'budget_entry'   => $e->name,
+                    'department'     => $e->department->name ?? 'N/A',
+                    'amount'         => $e->amount,
+                    'amount_used'    => $e->amount_used,
+                    'remaining'      => $e->amount - $e->amount_used,
+                    'utilisation_pct'=> $e->utilisation_pct,
+                    'status'         => $e->amount_used >= $e->amount ? 'Over Budget'
+                        : ($e->utilisation_pct >= 80 ? 'Near Limit' : 'On Track'),
+                ])->values();
+
+                \Illuminate\Support\Facades\Cache::put('utilisation_report', $data_array, now()->addHours(3));
+
+                $data['results']  = $results;
+                $data['header']   = [
+                    'header_name' => "Budget Utilisation Summary — {$budget_header->name}",
+                    'type'        => 'utilisation_report',
+                    'threshold'   => $threshold,
+                ];
+
+                return view('report.report_output', $data)
+                    ->with('success', 'Budget Utilisation Report Generated Successfully!');
+
             default:
                 return false;
         }
@@ -127,6 +190,9 @@ class ReportController extends Controller
 
             case 'departmentalReport':
                 return Excel::download(new DepartmentalReportExport($id), 'departmental_report.xlsx');
+
+            case 'utilisationReport':
+                return Excel::download(new UtilisationReportExport($id), 'utilisation_report.xlsx');
 
             default:
                 return false;
@@ -160,6 +226,18 @@ class ReportController extends Controller
                     ->setPaper('A4', 'landscape');
 
                 return $pdf->download('departmental_report.pdf');
+
+            case 'utilisationReport':
+                $data['results'] = Cache::get('utilisation_report');
+                $data['header'] = [
+                    'header_name' => $header,
+                    'type' => $type,
+                ];
+                $pdf = Pdf::loadView('report.report_pdf_output', $data)
+                    ->setPaper('A4', 'landscape');
+
+                return $pdf->download('utilisation_report.pdf');
+
             default:
                 return false;
         }

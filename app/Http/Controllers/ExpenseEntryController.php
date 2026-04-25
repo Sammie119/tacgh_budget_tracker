@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\ExpenseAmountImport;
 use App\Models\BudgetEntry;
 use App\Models\ExpenseEntry;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ExpenseEntryController extends Controller
 {
@@ -132,6 +134,50 @@ class ExpenseEntryController extends Controller
         );
 
         return redirect(route('expense_entries', absolute: false))->with('success', 'Expense Entered Successfully!!!');
+    }
+
+    /**
+     * Bulk-import amount_spent values from an uploaded Excel file.
+     * Expected columns: id, amount_spent
+     */
+    public function importExpense(Request $request)
+    {
+        $request->validate([
+            'import_file' => ['required', 'file', 'mimes:xlsx,xls,csv'],
+        ]);
+
+        $import = new ExpenseAmountImport();
+        Excel::import($import, $request->file('import_file'));
+
+        $message = "{$import->updatedCount} expense(s) updated successfully.";
+        if ($import->skippedCount > 0) {
+            $message .= " {$import->skippedCount} row(s) skipped (not found or invalid).";
+        }
+
+        return redirect(route('expense_entries'))->with('success', $message);
+    }
+
+    /**
+     * Download a blank Excel template for bulk expense upload.
+     */
+    public function downloadExpenseTemplate()
+    {
+        // Build the template as a simple collection
+        $rows = collect([
+            ['id' => 'EXPENSE_ENTRY_ID', 'amount_spent' => 'AMOUNT_SPENT'],
+            ['id' => '1',                'amount_spent' => '0.00'],
+        ]);
+
+        return Excel::download(new class($rows) implements \Maatwebsite\Excel\Concerns\FromCollection,
+            \Maatwebsite\Excel\Concerns\WithHeadings,
+            \Maatwebsite\Excel\Concerns\WithStyles {
+            public function __construct(private $rows) {}
+            public function collection() { return $this->rows; }
+            public function headings(): array { return ['id', 'amount_spent']; }
+            public function styles(\PhpOffice\PhpSpreadsheet\Worksheet\Worksheet $sheet): array {
+                return [1 => ['font' => ['bold' => true]]];
+            }
+        }, 'expense_upload_template.xlsx');
     }
 
     /**
